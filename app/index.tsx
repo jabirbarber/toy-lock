@@ -14,18 +14,24 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import UIButtonIcon from "../components/UIButtonIcon";
+import { spacing } from "../constants/theme";
 
 export default function KioskScreen() {
   const [isLocked, setIsLocked] = useState(false);
 
-  // Keep state in sync if kiosk is exited externally
+  // Enter kiosk mode on launch if not already active
   useEffect(() => {
-    const syncState = async () => {
+    const initKiosk = async () => {
       const enabled = await checkIfKioskEnabled();
-      setIsLocked(enabled);
+      if (!enabled) {
+        startKioskMode();
+        disableExitByUnpinning();
+      }
+      setIsLocked(true);
     };
-    syncState();
+    initKiosk();
   }, []);
 
   // Block hardware back button while locked
@@ -67,49 +73,22 @@ export default function KioskScreen() {
     >
       <StatusBar hidden={isLocked} style="light" />
 
-      {/* Lock icon */}
-      <View style={styles.iconContainer}>
-        <Text style={styles.lockIcon}>{isLocked ? "🔒" : "🔓"}</Text>
+      <View style={styles.header}>
+        <View style={styles.titleCtr}>
+          <UIButtonIcon
+            icon={isLocked ? "🔒" : "🔓"}
+            onPress={isLocked ? exitKioskMode : enterKioskMode}
+          />
+          <Text variant="headlineLarge" style={styles.title}>
+            {isLocked ? "Toy Active" : "Toy Mode"}
+          </Text>
+        </View>
+        <Text variant="bodyLarge" style={styles.subtitle}>
+          {isLocked
+            ? "Tap the lock to exit toy mode."
+            : "Tap the lock to enter toy mode and\ndisable system navigation."}
+        </Text>
       </View>
-
-      {/* Title */}
-      <Text variant="headlineLarge" style={styles.title}>
-        {isLocked ? "Device Locked" : "Kiosk Control"}
-      </Text>
-
-      {/* Sub-label */}
-      <Text variant="bodyLarge" style={styles.subtitle}>
-        {isLocked
-          ? "Kiosk mode is active.\nPress Unlock to exit."
-          : "Press Lock to enter kiosk mode and\ndisable system navigation."}
-      </Text>
-
-      {/* Action button */}
-      {isLocked ? (
-        <Button
-          mode="contained"
-          onPress={exitKioskMode}
-          style={styles.button}
-          contentStyle={styles.buttonContent}
-          labelStyle={styles.buttonLabel}
-          buttonColor="#22c55e"
-          textColor="#ffffff"
-        >
-          Unlock
-        </Button>
-      ) : (
-        <Button
-          mode="contained"
-          onPress={enterKioskMode}
-          style={styles.button}
-          contentStyle={styles.buttonContent}
-          labelStyle={styles.buttonLabel}
-          buttonColor="#ef4444"
-          textColor="#ffffff"
-        >
-          Lock
-        </Button>
-      )}
     </View>
   );
 }
@@ -117,10 +96,12 @@ export default function KioskScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: spacing.xl,
+  },
+  header: {
     alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-    paddingHorizontal: 32,
+    paddingTop: spacing.xxxl,
+    gap: spacing.sm,
   },
   unlockedBg: {
     backgroundColor: "#0f172a",
@@ -128,11 +109,10 @@ const styles = StyleSheet.create({
   lockedBg: {
     backgroundColor: "#1e1b4b",
   },
-  iconContainer: {
-    marginBottom: 8,
-  },
-  lockIcon: {
-    fontSize: 72,
+  titleCtr: {
+    flexDirection: "row",
+    alignItems: "center",
+    //gap: spacing.sm,
   },
   title: {
     color: "#f8fafc",
@@ -143,21 +123,6 @@ const styles = StyleSheet.create({
     color: "#94a3b8",
     textAlign: "center",
     lineHeight: 24,
-    marginBottom: 8,
-  },
-  button: {
-    marginTop: 16,
-    borderRadius: 12,
-    minWidth: 220,
-    elevation: 4,
-  },
-  buttonContent: {
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-  },
-  buttonLabel: {
-    fontSize: 18,
-    fontWeight: "700",
-    letterSpacing: 1,
+    marginBottom: spacing.sm,
   },
 });
