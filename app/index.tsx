@@ -4,38 +4,38 @@ import {
   exitKioskMode as kioskExit,
   onRecentButtonPressed,
   startKioskMode,
-} from "expo-kiosk-control"
-import { StatusBar } from "expo-status-bar"
-import React, { useEffect, useState } from "react"
+} from "expo-kiosk-control";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
 import {
   AppState,
   AppStateStatus,
   BackHandler,
   StyleSheet,
   View,
-} from "react-native"
-import { Button, Text } from "react-native-paper"
+} from "react-native";
+import { Button, Text } from "react-native-paper";
 
 export default function KioskScreen() {
-  const [isLocked, setIsLocked] = useState(false)
+  const [isLocked, setIsLocked] = useState(false);
 
   // Keep state in sync if kiosk is exited externally
   useEffect(() => {
     const syncState = async () => {
-      const enabled = await checkIfKioskEnabled()
-      setIsLocked(enabled)
-    }
-    syncState()
-  }, [])
+      const enabled = await checkIfKioskEnabled();
+      setIsLocked(enabled);
+    };
+    syncState();
+  }, []);
 
   // Block hardware back button while locked
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => isLocked,
-    )
-    return () => subscription.remove()
-  }, [isLocked])
+    );
+    return () => subscription.remove();
+  }, [isLocked]);
 
   // Handle recent-apps button press while in kiosk mode
   useEffect(() => {
@@ -43,23 +43,23 @@ export default function KioskScreen() {
       "change",
       (_state: AppStateStatus) => {
         if (isLocked) {
-          onRecentButtonPressed()
+          onRecentButtonPressed();
         }
       },
-    )
-    return () => subscription.remove()
-  }, [isLocked])
+    );
+    return () => subscription.remove();
+  }, [isLocked]);
 
   const enterKioskMode = async () => {
-    startKioskMode()
-    disableExitByUnpinning()
-    setIsLocked(true)
-  }
+    startKioskMode();
+    disableExitByUnpinning();
+    setIsLocked(true);
+  };
 
   const exitKioskMode = async () => {
-    kioskExit()
-    setIsLocked(false)
-  }
+    kioskExit();
+    setIsLocked(false);
+  };
 
   return (
     <View
@@ -111,7 +111,7 @@ export default function KioskScreen() {
         </Button>
       )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -160,4 +160,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 1,
   },
-})
+});
