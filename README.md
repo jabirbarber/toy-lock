@@ -1,50 +1,74 @@
-# Welcome to your Expo app 👋
+# Toy Lock
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An Android kiosk app built with Expo that locks the device into a single-app mode — useful for letting kids use a phone without access to system navigation or other apps.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Kiosk mode** — locks the device using Android's screen pinning (Lock Task Mode), disabling the back button, recent apps, and home gesture
+- **Auto-lock on launch** — enters kiosk mode immediately when the app is opened
+- **Dialpad** — full DTMF dialpad with authentic dial tones and haptic feedback on every key press
+- **Long-press-to-toggle** — long press the lock icon to enter or exit kiosk mode
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- [Expo](https://expo.dev) / React Native
+- [expo-kiosk-control](https://www.npmjs.com/package/expo-kiosk-control) — Android Lock Task Mode
+- [expo-audio](https://docs.expo.dev/versions/latest/sdk/audio/) — DTMF tone playback
+- [expo-haptics](https://docs.expo.dev/versions/latest/sdk/haptics/) — haptic feedback
+- [react-native-paper](https://reactnativepaper.com/) — UI components (MD3 dark theme)
 
-   ```bash
-   npx expo start
-   ```
+## Getting Started
 
-In the output, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js 18+
+- [EAS CLI](https://docs.expo.dev/eas/) for building
+- An Android device or emulator
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Run in development
 
-## Learn more
+Install the development build APK on your device, then:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Build a shareable APK
 
-## Join the community
+```bash
+eas build --profile preview --platform android
+```
 
-Join our community of developers creating universal apps.
+### Build a development APK
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+eas build --profile development --platform android
+```
+
+## Project Structure
+
+```
+app/
+  index.tsx         # Main kiosk screen
+  _layout.tsx       # Root layout with PaperProvider
+components/
+  UIDialpad.tsx     # DTMF dialpad with tones and haptics
+  UIButtonIcon.tsx  # Pressable icon button
+constants/
+  theme.ts          # Colours, spacing scale
+  device.ts         # Device dimensions
+assets/
+  sounds/           # Generated DTMF WAV files
+```
+
+## Notes
+
+- Kiosk mode uses Android **screen pinning** — no Device Owner setup required
+- The fingerprint/PIN prompt on unlock and the "App is pinned" popup are Android system behaviours that cannot be suppressed without Device Owner provisioning
+- DTMF tones are generated programmatically via `scripts/gen-dtmf.js` using standard ITU-T frequencies
