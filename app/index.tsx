@@ -25,7 +25,7 @@ export default function KioskScreen() {
       }
       setIsLocked(true);
     };
-    //initKiosk();
+    initKiosk();
   }, []);
 
   const enterKioskMode = async () => {
@@ -47,7 +47,7 @@ export default function KioskScreen() {
       <View style={styles.header}>
         <UIButtonIcon
           icon={isLocked ? "🔒" : "🔓"}
-          onPress={isLocked ? disableKioskMode : enterKioskMode}
+          onLongPress={isLocked ? disableKioskMode : enterKioskMode}
         />
         <View style={styles.titleCtr}>
           <Text variant="headlineLarge" style={styles.title}>
@@ -55,8 +55,8 @@ export default function KioskScreen() {
           </Text>
           <Text variant="bodyLarge" style={styles.subtitle}>
             {isLocked
-              ? "Tap the lock to exit toy mode."
-              : "Tap the lock to enter toy mode."}
+              ? "Hold the lock to exit toy mode."
+              : "Hold the lock to enter toy mode."}
           </Text>
         </View>
       </View>
@@ -75,10 +75,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   unlockedBg: {
-    backgroundColor: Colors.dark.backgroundMuted,
+    backgroundColor: Colors.backgroundMuted,
   },
   lockedBg: {
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "row",
@@ -89,16 +89,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   title: {
-    color: Colors.dark.text,
+    color: Colors.text,
+    paddingTop: spacing.xs,
     fontWeight: "700",
   },
   subtitle: {
-    color: Colors.dark.textSubtle,
+    color: Colors.textSubtle,
     lineHeight: 24,
   },
   body: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: spacing.xxxl,
   },
 });

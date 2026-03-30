@@ -3,19 +3,18 @@ import { Pressable, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import { spacing } from "../constants/theme";
 
-type UIButtonIconProps = {
+interface UIButtonIconProps extends React.ComponentProps<typeof Pressable> {
   icon: string;
   size?: number;
-  onPress: () => void;
-};
+}
 
 export default function UIButtonIcon({
   icon,
   size = spacing.xxl,
-  onPress,
+  ...props
 }: UIButtonIconProps) {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable style={styles.container} {...props}>
       <Text style={{ fontSize: size }}>{icon}</Text>
     </Pressable>
   );
