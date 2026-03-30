@@ -1,22 +1,16 @@
+import UIDialpad from "@/components/UIDialpad";
 import {
   checkIfKioskEnabled,
   disableExitByUnpinning,
-  exitKioskMode as kioskExit,
-  onRecentButtonPressed,
+  exitKioskMode,
   startKioskMode,
 } from "expo-kiosk-control";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import {
-  AppState,
-  AppStateStatus,
-  BackHandler,
-  StyleSheet,
-  View,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import UIButtonIcon from "../components/UIButtonIcon";
-import { spacing } from "../constants/theme";
+import { Colors, spacing } from "../constants/theme";
 
 export default function KioskScreen() {
   const [isLocked, setIsLocked] = useState(false);
@@ -31,30 +25,8 @@ export default function KioskScreen() {
       }
       setIsLocked(true);
     };
-    initKiosk();
+    //initKiosk();
   }, []);
-
-  // Block hardware back button while locked
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => isLocked,
-    );
-    return () => subscription.remove();
-  }, [isLocked]);
-
-  // Handle recent-apps button press while in kiosk mode
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      "change",
-      (_state: AppStateStatus) => {
-        if (isLocked) {
-          onRecentButtonPressed();
-        }
-      },
-    );
-    return () => subscription.remove();
-  }, [isLocked]);
 
   const enterKioskMode = async () => {
     startKioskMode();
@@ -62,8 +34,8 @@ export default function KioskScreen() {
     setIsLocked(true);
   };
 
-  const exitKioskMode = async () => {
-    kioskExit();
+  const disableKioskMode = async () => {
+    exitKioskMode();
     setIsLocked(false);
   };
 
@@ -72,22 +44,27 @@ export default function KioskScreen() {
       style={[styles.container, isLocked ? styles.lockedBg : styles.unlockedBg]}
     >
       <StatusBar hidden={isLocked} style="light" />
-
       <View style={styles.header}>
+        <UIButtonIcon
+          icon={isLocked ? "🔒" : "🔓"}
+          onPress={isLocked ? disableKioskMode : enterKioskMode}
+        />
         <View style={styles.titleCtr}>
-          <UIButtonIcon
-            icon={isLocked ? "🔒" : "🔓"}
-            onPress={isLocked ? exitKioskMode : enterKioskMode}
-          />
           <Text variant="headlineLarge" style={styles.title}>
-            {isLocked ? "Toy Active" : "Toy Mode"}
+            {isLocked ? "Lock Active" : "Unlocked"}
+          </Text>
+          <Text variant="bodyLarge" style={styles.subtitle}>
+            {isLocked
+              ? "Tap the lock to exit toy mode."
+              : "Tap the lock to enter toy mode."}
           </Text>
         </View>
-        <Text variant="bodyLarge" style={styles.subtitle}>
-          {isLocked
-            ? "Tap the lock to exit toy mode."
-            : "Tap the lock to enter toy mode and\ndisable system navigation."}
-        </Text>
+      </View>
+      <View style={styles.body}>
+        <UIDialpad
+          onChange={(digit) => console.log("Pressed digit:", digit)}
+          onSubmit={() => console.log("Submit")}
+        />
       </View>
     </View>
   );
@@ -96,33 +73,32 @@ export default function KioskScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
-  },
-  header: {
-    alignItems: "center",
-    paddingTop: spacing.xxxl,
-    gap: spacing.sm,
   },
   unlockedBg: {
-    backgroundColor: "#0f172a",
+    backgroundColor: Colors.dark.backgroundMuted,
   },
   lockedBg: {
-    backgroundColor: "#1e1b4b",
+    backgroundColor: Colors.dark.background,
   },
-  titleCtr: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    //gap: spacing.sm,
+    paddingTop: spacing.xxl, // should use safe area insets here
+  },
+  titleCtr: {
+    justifyContent: "flex-start",
   },
   title: {
-    color: "#f8fafc",
+    color: Colors.dark.text,
     fontWeight: "700",
-    textAlign: "center",
   },
   subtitle: {
-    color: "#94a3b8",
-    textAlign: "center",
+    color: Colors.dark.textSubtle,
     lineHeight: 24,
-    marginBottom: spacing.sm,
+  },
+  body: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

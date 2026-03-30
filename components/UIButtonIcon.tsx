@@ -11,7 +11,7 @@ type UIButtonIconProps = {
 
 export default function UIButtonIcon({
   icon,
-  size = 36,
+  size = spacing.xxl,
   onPress,
 }: UIButtonIconProps) {
   return (
