@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
-import { spacing } from "../constants/theme";
+import { spacing } from "../../constants/theme";
 
 interface UIButtonIconProps extends React.ComponentProps<typeof Pressable> {
   icon: string;
@@ -10,7 +10,7 @@ interface UIButtonIconProps extends React.ComponentProps<typeof Pressable> {
 
 export default function UIButtonIcon({
   icon,
-  size = spacing.xxl,
+  size = spacing.xl,
   ...props
 }: UIButtonIconProps) {
   return (

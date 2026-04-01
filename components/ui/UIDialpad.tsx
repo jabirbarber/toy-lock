@@ -4,7 +4,7 @@ import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { Colors, spacing } from "../constants/theme";
+import { Colors, spacing } from "../../constants/theme";
 
 type UIDialpadProps = {
   initialValue?: string;
@@ -202,18 +202,18 @@ const styles = StyleSheet.create({
 });
 
 const TONE_SOURCES = {
-  "1": require("../assets/sounds/dtmf_1.wav"),
-  "2": require("../assets/sounds/dtmf_2.wav"),
-  "3": require("../assets/sounds/dtmf_3.wav"),
-  "4": require("../assets/sounds/dtmf_4.wav"),
-  "5": require("../assets/sounds/dtmf_5.wav"),
-  "6": require("../assets/sounds/dtmf_6.wav"),
-  "7": require("../assets/sounds/dtmf_7.wav"),
-  "8": require("../assets/sounds/dtmf_8.wav"),
-  "9": require("../assets/sounds/dtmf_9.wav"),
-  star: require("../assets/sounds/dtmf_star.wav"),
-  "0": require("../assets/sounds/dtmf_0.wav"),
-  hash: require("../assets/sounds/dtmf_hash.wav"),
+  "1": require("../../assets/sounds/dtmf_1.wav"),
+  "2": require("../../assets/sounds/dtmf_2.wav"),
+  "3": require("../../assets/sounds/dtmf_3.wav"),
+  "4": require("../../assets/sounds/dtmf_4.wav"),
+  "5": require("../../assets/sounds/dtmf_5.wav"),
+  "6": require("../../assets/sounds/dtmf_6.wav"),
+  "7": require("../../assets/sounds/dtmf_7.wav"),
+  "8": require("../../assets/sounds/dtmf_8.wav"),
+  "9": require("../../assets/sounds/dtmf_9.wav"),
+  star: require("../../assets/sounds/dtmf_star.wav"),
+  "0": require("../../assets/sounds/dtmf_0.wav"),
+  hash: require("../../assets/sounds/dtmf_hash.wav"),
 };
 Object.values(TONE_SOURCES).forEach((src) => preload(src));
 

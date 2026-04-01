@@ -1,6 +1,8 @@
-{
+const IS_DEV = process.env.APP_VARIANT === "development";
+
+export default {
   "expo": {
-    "name": "Toy Lock",
+    "name": IS_DEV ? "Toy Lock (Dev)" : "Toy Lock",
     "slug": "toy-lock",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +14,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.jabirbarber.toylock",
+      "package": IS_DEV ? "com.jabirbarber.toylockdev" : "com.jabirbarber.toylock",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
