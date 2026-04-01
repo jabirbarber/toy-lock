@@ -50,6 +50,12 @@
         "projectId": "701bc908-d66c-4edf-9345-ed0fb60f8d0b"
       }
     },
-    "owner": "jabirbarber"
+    "owner": "jabirbarber",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/701bc908-d66c-4edf-9345-ed0fb60f8d0b"
+    }
   }
 }

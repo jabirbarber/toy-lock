@@ -6,6 +6,7 @@ import {
   startKioskMode,
 } from "expo-kiosk-control";
 import { StatusBar } from "expo-status-bar";
+import * as Updates from "expo-updates";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -14,6 +15,7 @@ import { Colors, spacing } from "../constants/theme";
 
 export default function KioskScreen() {
   const [isLocked, setIsLocked] = useState(false);
+  const [showVersion, setShowVersion] = useState(false);
 
   // Enter kiosk mode on launch if not already active
   useEffect(() => {
@@ -53,10 +55,16 @@ export default function KioskScreen() {
           <Text variant="headlineLarge" style={styles.title}>
             {isLocked ? "Lock Active" : "Unlocked"}
           </Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
-            {isLocked
-              ? "Hold the lock to exit toy mode."
-              : "Hold the lock to enter toy mode."}
+          <Text
+            variant="bodyLarge"
+            style={styles.subtitle}
+            onPress={() => setShowVersion(!showVersion)}
+          >
+            {showVersion
+              ? `Update: ${Updates.updateId?.slice(0, 8)}`
+              : isLocked
+                ? "Hold the lock to exit toy mode."
+                : "Hold the lock to enter toy mode."}
           </Text>
         </View>
       </View>
