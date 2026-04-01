@@ -1,5 +1,5 @@
 import { windowWidth } from "@/constants/device";
-import { createAudioPlayer } from "expo-audio";
+import { createAudioPlayer, preload } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -24,7 +24,6 @@ export default function UIDialpad({
 
   const pressFeedback = (tone?: ReturnType<typeof createAudioPlayer>) => {
     if (tone) {
-      tone.seekTo(0);
       tone.play();
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -67,7 +66,7 @@ export default function UIDialpad({
           <Pressable
             key={digit}
             style={({ pressed }) => [styles.key, pressed && styles.keyPressed]}
-            onPress={() => handleChange(digit, tone)}
+            onPressIn={() => handleChange(digit, tone)}
           >
             <Text style={styles.digit}>{digit}</Text>
             {letters ? <Text style={styles.letters}>{letters}</Text> : null}
@@ -100,7 +99,7 @@ export default function UIDialpad({
             styles.deleteButton,
             pressed && styles.deleteButtonPressed,
           ]}
-          onPress={() => handleChange("", undefined, true)}
+          onPressIn={() => handleChange("", undefined, true)}
         >
           <Text style={styles.deleteIcon}>⌫</Text>
         </Pressable>
@@ -202,65 +201,81 @@ const styles = StyleSheet.create({
   },
 });
 
+const TONE_SOURCES = {
+  "1": require("../assets/sounds/dtmf_1.wav"),
+  "2": require("../assets/sounds/dtmf_2.wav"),
+  "3": require("../assets/sounds/dtmf_3.wav"),
+  "4": require("../assets/sounds/dtmf_4.wav"),
+  "5": require("../assets/sounds/dtmf_5.wav"),
+  "6": require("../assets/sounds/dtmf_6.wav"),
+  "7": require("../assets/sounds/dtmf_7.wav"),
+  "8": require("../assets/sounds/dtmf_8.wav"),
+  "9": require("../assets/sounds/dtmf_9.wav"),
+  star: require("../assets/sounds/dtmf_star.wav"),
+  "0": require("../assets/sounds/dtmf_0.wav"),
+  hash: require("../assets/sounds/dtmf_hash.wav"),
+};
+Object.values(TONE_SOURCES).forEach((src) => preload(src));
+
 const KEYS = [
   {
     digit: "1",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_1.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["1"]),
   },
   {
     digit: "2",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_2.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["2"]),
   },
   {
     digit: "3",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_3.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["3"]),
   },
   {
     digit: "4",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_4.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["4"]),
   },
   {
     digit: "5",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_5.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["5"]),
   },
   {
     digit: "6",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_6.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["6"]),
   },
   {
     digit: "7",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_7.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["7"]),
   },
   {
     digit: "8",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_8.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["8"]),
   },
   {
     digit: "9",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_9.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["9"]),
   },
   {
     digit: "*",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_star.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["star"]),
   },
   {
     digit: "0",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_0.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["0"]),
   },
   {
     digit: "#",
     letters: "",
-    tone: createAudioPlayer(require("../assets/sounds/dtmf_hash.wav")),
+    tone: createAudioPlayer(TONE_SOURCES["hash"]),
   },
 ];
