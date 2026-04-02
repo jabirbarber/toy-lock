@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Colors, spacing } from "../../constants/theme";
 
-export default function DialpadScreen() {
+export default function PhoneScreen() {
   return (
     <View style={styles.container}>
       <UIDialpad

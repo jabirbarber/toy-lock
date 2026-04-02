@@ -27,7 +27,7 @@ export default function AppHeader() {
     <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
       <StatusBar hidden={isLocked} style="light" />
       <UIButtonIcon
-        icon={isLocked ? "🔒" : "🔓"}
+        emoji={isLocked ? "🔒" : "🔓"}
         onLongPress={isLocked ? disableKioskMode : enterKioskMode}
       />
       <View style={styles.titleCtr}>
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subtitle: {
-    color: Colors.textSubtle,
+    color: Colors.textMuted,
   },
 });

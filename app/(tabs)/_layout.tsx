@@ -1,8 +1,9 @@
+import UIIcon from "@/components/ui/UIIcon";
 import { Tabs } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import AppHeader from "../../components/AppHeader";
-import { Colors } from "../../constants/theme";
+import { Colors, spacing } from "../../constants/theme";
 import { useKiosk } from "../../contexts/KioskContext";
 
 export default function TabLayout() {
@@ -21,13 +22,30 @@ export default function TabLayout() {
             backgroundColor: bgColor,
             borderTopWidth: 0,
             elevation: 0,
+            marginBottom: spacing.sm,
           },
           tabBarActiveTintColor: Colors.tint,
-          tabBarInactiveTintColor: Colors.textSubtle,
+          tabBarInactiveTintColor: Colors.textMuted,
         }}
       >
-        <Tabs.Screen name="index" options={{ title: "Dialpad" }} />
-        <Tabs.Screen name="animals" options={{ title: "Animals" }} />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Phone",
+            tabBarIcon: ({ color, size }) => (
+              <UIIcon name="call" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="animals"
+          options={{
+            title: "Animals",
+            tabBarIcon: ({ color, size }) => (
+              <UIIcon name="pets" color={color} size={size} />
+            ),
+          }}
+        />
       </Tabs>
     </View>
   );

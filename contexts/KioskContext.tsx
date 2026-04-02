@@ -29,16 +29,16 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
       }
       setIsLocked(true);
     };
-    //init();
+    if (!__DEV__) init();
   }, []);
 
-  const enter = () => {
+  const enter = async () => {
     startKioskMode();
     disableExitByUnpinning();
     setIsLocked(true);
   };
 
-  const disable = () => {
+  const disable = async () => {
     exitKioskMode();
     setIsLocked(false);
   };

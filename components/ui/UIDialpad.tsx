@@ -24,6 +24,7 @@ export default function UIDialpad({
 
   const pressFeedback = (tone?: ReturnType<typeof createAudioPlayer>) => {
     if (tone) {
+      tone.seekTo(0);
       tone.play();
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -100,6 +101,7 @@ export default function UIDialpad({
             pressed && styles.deleteButtonPressed,
           ]}
           onPressIn={() => handleChange("", undefined, true)}
+          onLongPress={() => setValue("")}
         >
           <Text style={styles.deleteIcon}>⌫</Text>
         </Pressable>
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   letters: {
-    color: Colors.textSubtle,
+    color: Colors.textMuted,
     fontSize: 9,
     fontWeight: "700",
     letterSpacing: 2,
