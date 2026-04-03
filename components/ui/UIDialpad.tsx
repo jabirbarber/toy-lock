@@ -43,7 +43,15 @@ export default function UIDialpad({
 
   const handleSubmit = () => {
     pressFeedback(KEYS[0].tone);
-    setSubmitCount(submitCount + 1);
+    const nextCount = submitCount + 1;
+    setSubmitCount(nextCount);
+    const nextState = Math.abs(nextCount) % 2 === 1 ? "Calling" : "Idle";
+    if (nextState === "Calling") {
+      RINGTONE.seekTo(0);
+      RINGTONE.play();
+    } else {
+      RINGTONE.pause();
+    }
     onSubmit(value);
   };
 
@@ -202,6 +210,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
+const RINGTONE = createAudioPlayer(require("../../assets/sounds/ringtone.wav"));
 
 const TONE_SOURCES = {
   "1": require("../../assets/sounds/dtmf_1.wav"),

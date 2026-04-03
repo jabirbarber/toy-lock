@@ -1,7 +1,7 @@
 import UIDialpad from "@/components/ui/UIDialpad";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Colors, spacing } from "../../constants/theme";
+import { Colors } from "../../constants/theme";
 
 export default function PhoneScreen() {
   return (
@@ -20,6 +20,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: spacing.xxxl,
   },
 });
