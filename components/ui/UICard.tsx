@@ -39,7 +39,7 @@ export function UICardLabel({ children }: { children: React.ReactNode }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: spacing.md,
     alignItems: "center",
     justifyContent: "center",

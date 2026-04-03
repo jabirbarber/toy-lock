@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   list: {
     padding: spacing.md,
     gap: CARD_GAP,
-    backgroundColor: "#0e8377",
+    backgroundColor: "#0b6259",
     flexGrow: 1,
   },
   row: {
