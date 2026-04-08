@@ -27,7 +27,6 @@ export default function UIDialpad({
 
   const pressFeedback = (tone?: ReturnType<typeof createAudioPlayer>) => {
     if (tone) {
-      tone.seekTo(0);
       tone.play();
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);

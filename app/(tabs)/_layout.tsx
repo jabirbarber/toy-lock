@@ -1,10 +1,10 @@
+import TabBar from "@/components/TabBar";
 import UIIcon from "@/components/ui/UIIcon";
 import { Tabs } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import AppHeader from "../../components/AppHeader";
-import { spacing } from "../../constants/theme";
 
 export default function TabLayout() {
   const theme = useTheme();
@@ -15,19 +15,10 @@ export default function TabLayout() {
     >
       <AppHeader />
       <Tabs
+        tabBar={(props) => <TabBar {...props} />}
         screenOptions={{
           headerShown: false,
-          tabBarStyle: {
-            backgroundColor: theme.colors.background,
-            borderTopWidth: 0,
-            elevation: 0,
-            marginBottom: spacing.sm,
-          },
-          tabBarActiveTintColor: theme.colors.primary,
-          tabBarInactiveTintColor: theme.colors.onBackground,
-          sceneStyle: {
-            backgroundColor: theme.colors.background,
-          },
+          sceneStyle: { backgroundColor: theme.colors.background },
         }}
       >
         <Tabs.Screen
@@ -35,7 +26,7 @@ export default function TabLayout() {
           options={{
             title: "Phone",
             tabBarIcon: ({ color, size }) => (
-              <UIIcon name="call" color={color} size={size} />
+              <UIIcon name="dialpad" color={color} size={size} />
             ),
           }}
         />
