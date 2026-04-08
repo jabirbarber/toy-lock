@@ -1,11 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "../constants/theme";
 import { useKiosk } from "../contexts/KioskContext";
 import UIButtonIcon from "./ui/UIButtonIcon";
+import UIText from "./ui/UIText";
 
 function getUpdateId(): string {
   try {
@@ -32,13 +33,13 @@ export default function AppHeader() {
         onLongPress={isLocked ? disableKioskMode : enterKioskMode}
       />
       <View style={styles.titleCtr}>
-        <Text
+        <UIText
           variant="headlineSmall"
           style={{ color: theme.colors.onBackground, fontWeight: "bold" }}
         >
           {isLocked ? "Lock Active" : "Unlocked"}
-        </Text>
-        <Text
+        </UIText>
+        <UIText
           variant="bodySmall"
           onPress={() => setShowVersion((v) => !v)}
           style={{ color: theme.colors.primaryContainer }}
@@ -48,7 +49,7 @@ export default function AppHeader() {
             : isLocked
               ? "Hold the lock to exit toy mode."
               : "Hold the lock to enter toy mode."}
-        </Text>
+        </UIText>
       </View>
     </View>
   );

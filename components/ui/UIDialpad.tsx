@@ -1,10 +1,11 @@
 import UIIcon from "@/components/ui/UIIcon";
+import UIText from "@/components/ui/UIText";
 import { windowWidth } from "@/constants/device";
 import { createAudioPlayer, preload } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { spacing } from "../../constants/theme";
 
 type UIDialpadProps = {
@@ -63,14 +64,14 @@ export default function UIDialpad({
     <View style={styles.container}>
       {hasDisplay && (
         <View style={styles.display}>
-          <Text
+          <UIText
             variant="displayMedium"
             numberOfLines={1}
             ellipsizeMode="head"
             style={{ color: theme.colors.onBackground }}
           >
             {value}
-          </Text>
+          </UIText>
         </View>
       )}
       <View style={styles.grid}>
@@ -80,8 +81,8 @@ export default function UIDialpad({
             style={({ pressed }) => [styles.key, pressed && styles.keyPressed]}
             onPressIn={() => handleChange(digit, tone)}
           >
-            <Text style={styles.digit}>{digit}</Text>
-            {letters ? <Text style={styles.letters}>{letters}</Text> : null}
+            <UIText style={styles.digit}>{digit}</UIText>
+            {letters ? <UIText style={styles.letters}>{letters}</UIText> : null}
           </Pressable>
         ))}
       </View>
@@ -103,9 +104,9 @@ export default function UIDialpad({
           ]}
           onPress={handleSubmit}
         >
-          <Text style={styles.callIcon}>
+          <UIText style={styles.callIcon}>
             {callState === "calling" ? "✖️" : "📞"}
-          </Text>
+          </UIText>
         </Pressable>
         <Pressable
           style={({ pressed }) => [

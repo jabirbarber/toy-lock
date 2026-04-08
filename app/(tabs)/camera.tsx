@@ -1,9 +1,9 @@
 import UIButton from "@/components/ui/UIButton";
+import UIText from "@/components/ui/UIText";
 import { createAudioPlayer, preload } from "expo-audio";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
 import { spacing } from "../../constants/theme";
 
 const SHUTTER_SRC = require("../../assets/sounds/shutter.wav");
@@ -19,7 +19,7 @@ export default function CameraScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>Camera permission is required.</Text>
+        <UIText style={styles.message}>Camera permission is required.</UIText>
         <UIButton onPress={requestPermission}>Grant Permission</UIButton>
       </View>
     );

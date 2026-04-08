@@ -1,12 +1,17 @@
-import UICard, { UICardLabel } from "@/components/ui/UICard";
+import UICard from "@/components/ui/UICard";
+import UIText from "@/components/ui/UIText";
 import { windowWidth } from "@/constants/device";
 import { createAudioPlayer, preload } from "expo-audio";
-import React from "react";
-import { FlatList, StyleSheet, Text } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useTheme } from "react-native-paper";
 import { spacing } from "../../constants/theme";
 
+const ROWS = 5;
+const COLS = 2;
+const PADDING = spacing.md;
 const CARD_GAP = spacing.sm;
-const CARD_SIZE = (windowWidth - spacing.md * 2 - CARD_GAP * 2) / 3;
+const CARD_WIDTH = (windowWidth - PADDING * 2 - CARD_GAP * (COLS - 1)) / COLS;
 
 type Animal = {
   name: string;
@@ -32,11 +37,7 @@ Object.values(SOUND_SOURCES).forEach((src) => preload(src));
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 
 const ANIMALS: Animal[] = [
-  {
-    name: "Tiger",
-    emoji: "🐅",
-    sound: createAudioPlayer(SOUND_SOURCES.tiger),
-  },
+  { name: "Tiger", emoji: "🐅", sound: createAudioPlayer(SOUND_SOURCES.tiger) },
   {
     name: "Elephant",
     emoji: "🐘",
@@ -60,7 +61,14 @@ const ANIMALS: Animal[] = [
   { name: "Lion", emoji: "🦁", sound: createAudioPlayer(SOUND_SOURCES.lion) },
 ];
 
-function AnimalCard({ item }: { item: Animal }) {
+function AnimalCard({
+  item,
+  cardHeight,
+}: {
+  item: Animal;
+  cardHeight: number;
+}) {
+  const theme = useTheme();
   const handlePress = () => {
     if (currentPlayer && currentPlayer !== item.sound) {
       currentPlayer.pause();
@@ -71,41 +79,71 @@ function AnimalCard({ item }: { item: Animal }) {
   };
 
   return (
-    <UICard pressable onPress={handlePress} style={styles.card}>
-      <Text style={styles.emoji}>{item.emoji}</Text>
-      <UICardLabel>{item.name}</UICardLabel>
+    <UICard
+      onPress={handlePress}
+      style={{ width: CARD_WIDTH, height: cardHeight }}
+    >
+      <UIText style={styles.emoji}>{item.emoji}</UIText>
+      <UIText
+        variant="bodySmall"
+        style={{
+          marginTop: spacing.sm,
+          fontWeight: "bold",
+          color: theme.colors.tertiaryContainer,
+        }}
+      >
+        {item.name}
+      </UIText>
     </UICard>
   );
 }
 
 export default function AnimalsScreen() {
+  const theme = useTheme();
+  const [containerHeight, setContainerHeight] = useState(0);
+
+  const cardHeight =
+    containerHeight > 0
+      ? (containerHeight - PADDING * 2 - CARD_GAP * (ROWS - 1)) / ROWS
+      : 0;
+
+  const rows: Animal[][] = [];
+  for (let i = 0; i < ROWS; i++) {
+    rows.push(ANIMALS.slice(i * COLS, i * COLS + COLS));
+  }
+
   return (
-    <FlatList
-      data={ANIMALS}
-      keyExtractor={(item) => item.name}
-      numColumns={2}
-      contentContainerStyle={styles.list}
-      columnWrapperStyle={styles.row}
-      renderItem={({ item }) => <AnimalCard item={item} />}
-    />
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.tertiary }]}
+      onLayout={(e) => setContainerHeight(e.nativeEvent.layout.height)}
+    >
+      {containerHeight > 0 &&
+        rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.row}>
+            {row.map((animal) => (
+              <AnimalCard
+                key={animal.name}
+                item={animal}
+                cardHeight={cardHeight}
+              />
+            ))}
+          </View>
+        ))}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  list: {
-    padding: spacing.md,
+  container: {
+    flex: 1,
+    padding: PADDING,
     gap: CARD_GAP,
-    backgroundColor: "#0b6259",
-    flexGrow: 1,
   },
   row: {
+    flexDirection: "row",
     gap: CARD_GAP,
   },
-  card: {
-    width: windowWidth / 2 - spacing.md - CARD_GAP / 2,
-    height: CARD_SIZE,
-  },
   emoji: {
-    fontSize: 60,
+    fontSize: 50,
   },
 });
