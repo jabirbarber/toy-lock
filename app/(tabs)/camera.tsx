@@ -6,7 +6,7 @@ import React, { useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { spacing } from "../../constants/theme";
 
-const SHUTTER_SRC = require("../../assets/sounds/shutter.wav");
+const SHUTTER_SRC = require("../../assets/sounds/shutter.mp3");
 preload(SHUTTER_SRC);
 const shutterPlayer = createAudioPlayer(SHUTTER_SRC);
 
@@ -32,14 +32,19 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing="front" />
+      <CameraView
+        ref={cameraRef}
+        style={styles.camera}
+        facing="front"
+        pictureSize="640x480"
+      />
       <View style={styles.controls}>
         <Pressable
           style={({ pressed }) => [
             styles.captureButton,
             pressed && styles.captureButtonPressed,
           ]}
-          onPress={handleCapture}
+          onPressIn={handleCapture}
         >
           <View style={styles.captureButtonInner} />
         </Pressable>

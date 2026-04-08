@@ -26,7 +26,17 @@ export default function AppHeader() {
   const theme = useTheme();
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
+    <View
+      style={[
+        styles.header,
+        {
+          paddingTop: insets.top,
+          backgroundColor: isLocked
+            ? theme.colors.background
+            : theme.colors.secondary,
+        },
+      ]}
+    >
       <StatusBar hidden={isLocked} style="light" />
       <UIButtonIcon
         emoji={isLocked ? "🔒" : "🔓"}
@@ -42,7 +52,7 @@ export default function AppHeader() {
         <UIText
           variant="bodySmall"
           onPress={() => setShowVersion((v) => !v)}
-          style={{ color: theme.colors.primaryContainer }}
+          style={{ color: theme.colors.onBackground, opacity: 0.5 }}
         >
           {showVersion
             ? getUpdateId()

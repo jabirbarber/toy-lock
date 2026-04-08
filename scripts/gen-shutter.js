@@ -1,9 +1,9 @@
 const fs = require("fs");
 
-// Classic mechanical camera shutter sound
-// Sharp click: broadband noise burst with fast decay + mirror slap resonance
-const SAMPLE_RATE = 16000;
-const DURATION = 0.4;
+// Mechanical camera button click
+// Modelled after a manual 35mm SLR: button press thunk → mirror slap → shutter curtain snap → mirror return
+const SAMPLE_RATE = 44100;
+const DURATION = 0.25;
 const SAMPLES = Math.floor(SAMPLE_RATE * DURATION);
 
 function makeWav(generator) {
@@ -29,27 +29,61 @@ function makeWav(generator) {
   return buf;
 }
 
-// LCG pseudo-random noise (deterministic, no Math.random drift)
-let seed = 123456789;
+// Deterministic LCG noise
+let seed = 987654321;
 function noise() {
   seed = (seed * 1664525 + 1013904223) & 0xffffffff;
   return (seed / 0x80000000) - 1;
 }
 
 const TWO_PI = 2 * Math.PI;
+const sin = (f, t) => Math.sin(TWO_PI * f * t);
+
+// Simple one-pole low-pass filter state
+let lpState = 0;
+function lowPass(x, cutoff) {
+  const alpha = cutoff / (cutoff + SAMPLE_RATE);
+  lpState = lpState + alpha * (x - lpState);
+  return lpState;
+}
 
 function shutter(t) {
-  // Phase 1: sharp click burst (0–8ms) — broadband noise with fast decay
-  const click = Math.exp(-t * 400) * noise() * 0.8;
+  // 1. Button press thunk: 0–4ms — low, dull plastic/metal impact
+  //    Models the button mechanism bottoming out
+  const thunkEnv = Math.exp(-t * 900);
+  const thunk = thunkEnv * (
+    0.5 * sin(280, t) +
+    0.3 * sin(520, t) +
+    0.6 * noise() * Math.exp(-t * 1800)
+  );
 
-  // Phase 2: mirror slap resonance (5–80ms) — 1200Hz tone ring-down
-  const mirror = Math.exp(-t * 60) * Math.sin(TWO_PI * 1200 * t) * 0.35;
+  // 2. Mirror slap: 6–35ms — the mirror swings up and hits the mirror box
+  const t2 = t - 0.006;
+  const mirrorEnv = t2 > 0 ? Math.exp(-t2 * 220) : 0;
+  const mirror = mirrorEnv * (
+    0.55 * sin(1400 - 600 * t2, t2) +      // descending pitch as mirror settles
+    0.25 * sin(2800, t2) +
+    0.4 * noise() * Math.exp(-t2 * 600)
+  );
 
-  // Phase 3: shutter close click (150ms) — smaller secondary click
-  const t2 = t - 0.15;
-  const close = t2 > 0 ? Math.exp(-t2 * 300) * noise() * 0.4 : 0;
+  // 3. Shutter curtain: 20–70ms — the fabric/metal curtain firing across the sensor
+  //    Modelled as a brief high-freq scrape
+  const t3 = t - 0.020;
+  const curtainEnv = t3 > 0 ? Math.exp(-t3 * 180) - Math.exp(-t3 * 900) : 0;
+  const curtain = curtainEnv * (
+    0.35 * noise() +
+    0.2 * sin(3200, t3)
+  );
 
-  return click + mirror + close;
+  // 4. Mirror return thunk: 120ms — mirror drops back down, softer
+  const t4 = t - 0.120;
+  const returnEnv = t4 > 0 ? Math.exp(-t4 * 400) : 0;
+  const mirrorReturn = returnEnv * (
+    0.3 * sin(320, t4) +
+    0.25 * noise() * Math.exp(-t4 * 800)
+  );
+
+  return thunk + mirror + curtain + mirrorReturn;
 }
 
 fs.mkdirSync("assets/sounds", { recursive: true });
