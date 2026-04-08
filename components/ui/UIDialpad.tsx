@@ -1,10 +1,11 @@
+import UIIcon from "@/components/ui/UIIcon";
 import { windowWidth } from "@/constants/device";
 import { createAudioPlayer, preload } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
-import { Colors, spacing } from "../../constants/theme";
+import { Text, useTheme } from "react-native-paper";
+import { spacing } from "../../constants/theme";
 
 type UIDialpadProps = {
   initialValue?: string;
@@ -19,6 +20,7 @@ export default function UIDialpad({
   onChange,
   onSubmit,
 }: UIDialpadProps) {
+  const theme = useTheme();
   const [value, setValue] = useState(initialValue);
   const [submitCount, setSubmitCount] = useState(0);
 
@@ -45,8 +47,8 @@ export default function UIDialpad({
     pressFeedback(KEYS[0].tone);
     const nextCount = submitCount + 1;
     setSubmitCount(nextCount);
-    const nextState = Math.abs(nextCount) % 2 === 1 ? "Calling" : "Idle";
-    if (nextState === "Calling") {
+    const nextState = Math.abs(nextCount) % 2 === 1 ? "calling" : "Idle";
+    if (nextState === "calling") {
       RINGTONE.seekTo(0);
       RINGTONE.play();
     } else {
@@ -55,16 +57,17 @@ export default function UIDialpad({
     onSubmit(value);
   };
 
-  const callState = Math.abs(submitCount) % 2 === 1 ? "Calling" : "Idle";
+  const callState = Math.abs(submitCount) % 2 === 1 ? "calling" : "Idle";
 
   return (
     <View style={styles.container}>
       {hasDisplay && (
         <View style={styles.display}>
           <Text
-            style={styles.displayText}
+            variant="displayMedium"
             numberOfLines={1}
             ellipsizeMode="head"
+            style={{ color: theme.colors.onBackground }}
           >
             {value}
           </Text>
@@ -89,18 +92,20 @@ export default function UIDialpad({
             styles.callButton,
             {
               backgroundColor:
-                callState === "Calling" ? Colors.error : Colors.success,
+                callState === "calling" ? theme.colors.error : "#15a961",
             },
             pressed && {
               backgroundColor:
-                callState === "Calling"
-                  ? Colors.errorMuted
-                  : Colors.successMuted,
+                callState === "calling"
+                  ? theme.colors.onErrorContainer
+                  : "#19db7d",
             },
           ]}
           onPress={handleSubmit}
         >
-          <Text style={styles.callIcon}>📞</Text>
+          <Text style={styles.callIcon}>
+            {callState === "calling" ? "✖️" : "📞"}
+          </Text>
         </Pressable>
         <Pressable
           style={({ pressed }) => [
@@ -111,7 +116,7 @@ export default function UIDialpad({
           onPressIn={() => handleChange("", undefined, true)}
           onLongPress={() => setValue("")}
         >
-          <Text style={styles.deleteIcon}>⌫</Text>
+          <UIIcon color="#fff" name="backspace" size={28} />
         </Pressable>
       </View>
     </View>
@@ -132,17 +137,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.15)",
-    minHeight: 56,
+    borderBottomColor: "rgba(255,255,255,0.25)",
+    minHeight: 77,
     overflow: "hidden",
-  },
-  displayText: {
-    color: Colors.text,
-    fontSize: 36,
-    fontWeight: "300",
-    letterSpacing: 6,
-    includeFontPadding: false,
-    textAlign: "center",
   },
   grid: {
     flexDirection: "row",
@@ -157,20 +154,18 @@ const styles = StyleSheet.create({
     borderRadius: KEY_HEIGHT / 2,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.07)",
+    backgroundColor: "rgba(255,255,255,0.25)",
   },
   keyPressed: {
-    backgroundColor: "rgba(255,255,255,0.18)",
+    backgroundColor: "rgba(255,255,255,0.5)",
   },
   digit: {
-    color: Colors.text,
     fontSize: 32,
     fontWeight: "300",
     includeFontPadding: false,
+    color: "#fff",
   },
   letters: {
-    color: Colors.textMuted,
-    fontSize: 9,
     fontWeight: "700",
     letterSpacing: 2,
     marginTop: -2,
@@ -198,16 +193,16 @@ const styles = StyleSheet.create({
   },
   callIcon: {
     fontSize: 28,
-    color: Colors.tint,
   },
   deleteButton: {
     borderRadius: KEY_HEIGHT,
+    paddingRight: spacing.xs,
   },
   deleteButtonPressed: {
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(255,255,255,0.5)",
   },
   deleteIcon: {
-    fontSize: 24,
+    color: "#fff",
   },
 });
 

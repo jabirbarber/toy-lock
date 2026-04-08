@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
-import { Colors, spacing } from "../../constants/theme";
+import { spacing } from "../../constants/theme";
 
 type UICardProps = {
   pressable?: boolean;
@@ -34,7 +34,7 @@ export default function UICard({
 }
 
 export function UICardLabel({ children }: { children: React.ReactNode }) {
-  return <Text style={styles.label}>{children}</Text>;
+  return <Text variant="bodySmall">{children}</Text>;
 }
 
 const styles = StyleSheet.create({
@@ -47,12 +47,5 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     backgroundColor: "rgba(255,255,255,0.6)",
-  },
-  label: {
-    color: Colors.text,
-    fontSize: 11,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    marginTop: spacing.xs,
   },
 });

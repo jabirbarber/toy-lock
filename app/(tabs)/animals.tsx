@@ -29,6 +29,8 @@ const SOUND_SOURCES: Record<string, number> = {
 
 Object.values(SOUND_SOURCES).forEach((src) => preload(src));
 
+let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
+
 const ANIMALS: Animal[] = [
   {
     name: "Tiger",
@@ -60,6 +62,10 @@ const ANIMALS: Animal[] = [
 
 function AnimalCard({ item }: { item: Animal }) {
   const handlePress = () => {
+    if (currentPlayer && currentPlayer !== item.sound) {
+      currentPlayer.pause();
+    }
+    currentPlayer = item.sound;
     item.sound.seekTo(0);
     item.sound.play();
   };

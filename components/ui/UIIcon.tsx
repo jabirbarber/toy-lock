@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Text } from "react-native-paper";
-import { Colors, spacing } from "../../constants/theme";
+import { spacing } from "../../constants/theme";
 
 export interface UIIconProps extends React.ComponentProps<
   typeof MaterialIcons
@@ -11,13 +11,13 @@ export interface UIIconProps extends React.ComponentProps<
 }
 
 export default function UIIcon({
-  color = Colors.text,
   size = spacing.xl,
   name,
   emoji,
   children,
   ...props
 }: UIIconProps) {
-  if (emoji) return <Text style={{ fontSize: size }}>{emoji}</Text>;
-  return <MaterialIcons name={name} color={color} size={size} {...props} />;
+  if (emoji)
+    return <Text style={{ fontSize: size, color: props.color }}>{emoji}</Text>;
+  return <MaterialIcons name={name} size={size} {...props} />;
 }

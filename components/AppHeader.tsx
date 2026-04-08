@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors, spacing } from "../constants/theme";
+import { spacing } from "../constants/theme";
 import { useKiosk } from "../contexts/KioskContext";
 import UIButtonIcon from "./ui/UIButtonIcon";
 
@@ -22,6 +22,7 @@ export default function AppHeader() {
   const { isLocked, enterKioskMode, disableKioskMode } = useKiosk();
   const [showVersion, setShowVersion] = useState(false);
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   return (
     <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
@@ -31,13 +32,16 @@ export default function AppHeader() {
         onLongPress={isLocked ? disableKioskMode : enterKioskMode}
       />
       <View style={styles.titleCtr}>
-        <Text variant="headlineSmall" style={styles.title}>
+        <Text
+          variant="headlineSmall"
+          style={{ color: theme.colors.onBackground, fontWeight: "bold" }}
+        >
           {isLocked ? "Lock Active" : "Unlocked"}
         </Text>
         <Text
           variant="bodySmall"
-          style={styles.subtitle}
           onPress={() => setShowVersion((v) => !v)}
+          style={{ color: theme.colors.primaryContainer }}
         >
           {showVersion
             ? getUpdateId()
@@ -58,12 +62,5 @@ const styles = StyleSheet.create({
   },
   titleCtr: {
     justifyContent: "flex-start",
-  },
-  title: {
-    color: Colors.text,
-    fontWeight: "700",
-  },
-  subtitle: {
-    color: Colors.textMuted,
   },
 });

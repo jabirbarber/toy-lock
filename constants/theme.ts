@@ -1,26 +1,30 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+import { MD3LightTheme } from "react-native-paper";
 
-import { Platform } from "react-native";
+export default {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
 
-const tintColorDark = "#f8fafc";
+    primary: "rgb(157, 22, 185)",
+    onPrimary: "rgb(255, 255, 255)",
+    primaryContainer: "rgb(254, 214, 255)",
+    onPrimaryContainer: "rgb(53, 0, 65)",
 
-export const Colors = {
-  text: "#f8fafc",
-  textMuted: "#94a3b8",
-  background: "#1e1b4b",
-  backgroundMuted: "#0f172a",
-  tint: tintColorDark,
-  icon: "#9BA1A6",
-  success: "#22c55e",
-  successMuted: "#16a34a",
-  error: "#ef4444",
-  errorMuted: "#b91c1c",
+    secondary: "rgb(158, 64, 61)",
+    onSecondary: "rgb(255, 255, 255)",
+    secondaryContainer: "rgb(255, 218, 215)",
+    onSecondaryContainer: "rgb(65, 0, 4)",
+
+    tertiary: "rgb(0, 98, 157)",
+    onTertiary: "rgb(255, 255, 255)",
+    tertiaryContainer: "rgb(207, 229, 255)",
+    onTertiaryContainer: "rgb(0, 29, 51)",
+
+    background: "#261f32",
+    onBackground: "#fbfafb",
+  },
 };
 
-/** Base-4 spacing scale */
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -30,29 +34,3 @@ export const spacing = {
   xxl: 48,
   xxxl: 64,
 } as const;
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: "ui-monospace",
-  },
-  default: {
-    sans: "normal",
-    serif: "serif",
-    rounded: "normal",
-    mono: "monospace",
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
