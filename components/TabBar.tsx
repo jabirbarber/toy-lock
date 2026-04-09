@@ -1,39 +1,42 @@
+import UIIcon, { UIIconProps } from "@/components/ui/UIIcon";
 import { windowWidth } from "@/constants/device";
 import { spacing } from "@/constants/theme";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type {
+  NavigationState,
+  SceneRendererProps,
+} from "react-native-tab-view";
 
 const TAB_HEIGHT = 120;
 const ICON_SIZE = 24;
 const PILL_PADDING = spacing.sm;
 const PILL_SIZE = ICON_SIZE + PILL_PADDING * 2;
 
-export default function TabBar({
-  state,
-  descriptors,
-  navigation,
-}: BottomTabBarProps) {
+export type TabRoute = {
+  key: string;
+  title: string;
+  icon: UIIconProps["name"];
+};
+
+type Props = SceneRendererProps & {
+  navigationState: NavigationState<TabRoute>;
+};
+
+export default function TabBar({ navigationState, position, jumpTo }: Props) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const tabCount = state.routes.length;
+  const tabCount = navigationState.routes.length;
   const tabWidth = windowWidth / tabCount;
 
-  const getX = (index: number) =>
-    index * tabWidth + tabWidth / 2 - PILL_SIZE / 2;
-
-  const translateX = useRef(new Animated.Value(getX(state.index))).current;
-  useEffect(() => {
-    Animated.spring(translateX, {
-      toValue: state.index * tabWidth + tabWidth / 2 - PILL_SIZE / 2,
-      useNativeDriver: true,
-      damping: 18,
-      stiffness: 200,
-      mass: 0.8,
-    }).start();
-  }, [state.index, tabWidth, translateX]);
+  const translateX = position.interpolate({
+    inputRange: navigationState.routes.map((_, i) => i),
+    outputRange: navigationState.routes.map(
+      (_, i) => i * tabWidth + tabWidth / 2 - PILL_SIZE / 2,
+    ),
+  });
 
   return (
     <View
@@ -55,35 +58,23 @@ export default function TabBar({
           },
         ]}
       />
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
+      {navigationState.routes.map((route, index) => {
+        const isFocused = navigationState.index === index;
 
         return (
           <Pressable
             key={route.key}
-            onPress={onPress}
+            onPress={() => jumpTo(route.key)}
             style={[styles.tab, { width: tabWidth }]}
           >
             <View style={styles.iconContainer}>
-              {options.tabBarIcon?.({
-                focused: isFocused,
-                color: isFocused
-                  ? theme.colors.primary
-                  : theme.colors.onBackground,
-                size: ICON_SIZE,
-              })}
+              <UIIcon
+                name={route.icon}
+                color={
+                  isFocused ? theme.colors.primary : theme.colors.onBackground
+                }
+                size={ICON_SIZE}
+              />
             </View>
           </Pressable>
         );
