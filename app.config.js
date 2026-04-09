@@ -16,12 +16,16 @@ export default {
     "android": {
       "package": IS_DEV ? "com.jabirbarber.toylockdev" : "com.jabirbarber.toylock",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#261f32",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "navigationBar": {
+        "backgroundColor": "#261f32",
+        "barStyle": "light-content"
+      }
     },
     "web": {
       "output": "static",
@@ -32,12 +36,12 @@ export default {
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#261f32",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#261f32"
           }
         }
       ]
