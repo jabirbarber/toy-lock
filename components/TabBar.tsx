@@ -1,8 +1,9 @@
 import UIIcon, { UIIconProps } from "@/components/ui/UIIcon";
 import { windowWidth } from "@/constants/device";
 import { spacing } from "@/constants/theme";
-import React from "react";
-import { Animated, Pressable, StyleSheet, View } from "react-native";
+import React, { useRef } from "react";
+import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type {
@@ -31,55 +32,95 @@ export default function TabBar({ navigationState, position, jumpTo }: Props) {
   const tabCount = navigationState.routes.length;
   const tabWidth = windowWidth / tabCount;
 
-  const translateX = position.interpolate({
+  const getCenter = (index: number) =>
+    index * tabWidth + tabWidth / 2 - PILL_SIZE / 2;
+
+  const dragDelta = useRef(new Animated.Value(0)).current;
+
+  // baseX is a native-thread interpolation — reliably tracks screen swipes
+  const baseX = position.interpolate({
     inputRange: navigationState.routes.map((_, i) => i),
-    outputRange: navigationState.routes.map(
-      (_, i) => i * tabWidth + tabWidth / 2 - PILL_SIZE / 2,
-    ),
+    outputRange: navigationState.routes.map((_, i) => getCenter(i)),
+    extrapolate: "clamp",
   });
 
+  const pillX = Animated.add(baseX, dragDelta);
+
+  const swipeGesture = Gesture.Pan()
+    .runOnJS(true)
+    .activeOffsetX([-10, 10])
+    .onBegin(() => {
+      dragDelta.stopAnimation();
+    })
+    .onUpdate((event) => {
+      const currentCenter = getCenter(navigationState.index);
+      const minDelta = getCenter(0) - currentCenter;
+      const maxDelta = getCenter(tabCount - 1) - currentCenter;
+      dragDelta.setValue(
+        Math.max(minDelta, Math.min(maxDelta, event.translationX)),
+      );
+    })
+    .onEnd((event) => {
+      const nearestIndex = Math.round(
+        navigationState.index + event.translationX / tabWidth,
+      );
+      const clampedIndex = Math.max(0, Math.min(nearestIndex, tabCount - 1));
+      jumpTo(navigationState.routes[clampedIndex].key);
+      // Animate dragDelta back to 0 with the same decelerate curve the pager
+      // uses, so baseX rising and dragDelta falling cancel each other out and
+      // the pill appears to stay locked on the target tab.
+      Animated.timing(dragDelta, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }).start();
+    });
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.background,
-          paddingBottom: insets.bottom,
-        },
-      ]}
-    >
-      <Animated.View
+    <GestureDetector gesture={swipeGesture}>
+      <View
         style={[
-          styles.indicator,
+          styles.container,
           {
-            backgroundColor: theme.colors.primaryContainer,
-            top: (TAB_HEIGHT - insets.bottom) / 2 - PILL_SIZE / 2,
-            transform: [{ translateX }],
+            backgroundColor: theme.colors.background,
+            paddingBottom: insets.bottom,
           },
         ]}
-      />
-      {navigationState.routes.map((route, index) => {
-        const isFocused = navigationState.index === index;
+      >
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              backgroundColor: theme.colors.primaryContainer,
+              top: (TAB_HEIGHT - insets.bottom) / 2 - PILL_SIZE / 2,
+              transform: [{ translateX: pillX }],
+            },
+          ]}
+        />
+        {navigationState.routes.map((route, index) => {
+          const isFocused = navigationState.index === index;
 
-        return (
-          <Pressable
-            key={route.key}
-            onPress={() => jumpTo(route.key)}
-            style={[styles.tab, { width: tabWidth }]}
-          >
-            <View style={styles.iconContainer}>
-              <UIIcon
-                name={route.icon}
-                color={
-                  isFocused ? theme.colors.primary : theme.colors.onBackground
-                }
-                size={ICON_SIZE}
-              />
-            </View>
-          </Pressable>
-        );
-      })}
-    </View>
+          return (
+            <Pressable
+              key={route.key}
+              onPress={() => jumpTo(route.key)}
+              style={[styles.tab, { width: tabWidth }]}
+            >
+              <View style={styles.iconContainer}>
+                <UIIcon
+                  name={route.icon}
+                  color={
+                    isFocused ? theme.colors.primary : theme.colors.onBackground
+                  }
+                  size={ICON_SIZE}
+                />
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
+    </GestureDetector>
   );
 }
 
