@@ -36,6 +36,7 @@ export default function TabLayout() {
         onIndexChange={setIndex}
         initialLayout={{ width: windowWidth }}
         tabBarPosition="bottom"
+        swipeEnabled={false}
         renderTabBar={(props) => <TabBar {...props} />}
       />
     </View>
