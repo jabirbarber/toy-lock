@@ -32,12 +32,7 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView
-        ref={cameraRef}
-        style={styles.camera}
-        facing="front"
-        pictureSize="640x480"
-      />
+      <CameraView ref={cameraRef} style={styles.camera} facing="front" />
       <View style={styles.controls}>
         <Pressable
           style={({ pressed }) => [

@@ -51,7 +51,6 @@ export default function TabBar({ navigationState, jumpTo }: Props) {
 
   const pillX = useSharedValue(getCenter(navigationState.index));
 
-  // Spring the pill whenever the active index changes (icon press).
   useEffect(() => {
     cancelAnimation(pillX);
     pillX.value = withSpring(getCenter(navigationState.index), SPRING);
@@ -89,6 +88,10 @@ export default function TabBar({ navigationState, jumpTo }: Props) {
     transform: [{ translateX: pillX.value }],
   }));
 
+  const maskInnerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: PILL_SIZE / 2 - pillX.value }],
+  }));
+
   return (
     <GestureDetector gesture={gesture}>
       <View
@@ -100,9 +103,27 @@ export default function TabBar({ navigationState, jumpTo }: Props) {
           },
         ]}
       >
+        {/* Tab Icon Buttons */}
+        {navigationState.routes.map((route) => (
+          <Pressable
+            key={route.key}
+            onPress={() => jumpTo(route.key)}
+            style={[styles.tab, { width: tabWidth }]}
+          >
+            <View style={styles.iconContainer}>
+              <UIIcon
+                name={route.icon}
+                color={theme.colors.onBackground}
+                size={ICON_SIZE}
+              />
+            </View>
+          </Pressable>
+        ))}
+        {/* Pill Background */}
         <Animated.View
+          pointerEvents="none"
           style={[
-            styles.indicator,
+            styles.pill,
             {
               backgroundColor: theme.colors.primaryContainer,
               top: (TAB_HEIGHT - insets.bottom) / 2 - PILL_SIZE / 2,
@@ -110,26 +131,31 @@ export default function TabBar({ navigationState, jumpTo }: Props) {
             indicatorStyle,
           ]}
         />
-        {navigationState.routes.map((route, index) => {
-          const isFocused = navigationState.index === index;
-          return (
-            <Pressable
-              key={route.key}
-              onPress={() => jumpTo(route.key)}
-              style={[styles.tab, { width: tabWidth }]}
-            >
-              <View style={styles.iconContainer}>
+        {/* Pill Mask */}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.pill,
+            styles.pillMask,
+            { top: (TAB_HEIGHT - insets.bottom) / 2 - PILL_SIZE / 2 },
+            indicatorStyle,
+          ]}
+        >
+          <Animated.View style={[styles.pillMaskInner, maskInnerStyle]}>
+            {navigationState.routes.map((route) => (
+              <View
+                key={route.key}
+                style={[styles.tabMask, { width: tabWidth }]}
+              >
                 <UIIcon
                   name={route.icon}
-                  color={
-                    isFocused ? theme.colors.primary : theme.colors.onBackground
-                  }
+                  color={theme.colors.primary}
                   size={ICON_SIZE}
                 />
               </View>
-            </Pressable>
-          );
-        })}
+            ))}
+          </Animated.View>
+        </Animated.View>
       </View>
     </GestureDetector>
   );
@@ -152,12 +178,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  indicator: {
+  pill: {
     position: "absolute",
     top: 0,
     left: -PILL_SIZE / 2,
     width: PILL_SIZE * 2,
     height: PILL_SIZE,
     borderRadius: PILL_SIZE / 2,
+  },
+  pillMask: {
+    overflow: "hidden",
+    backgroundColor: "transparent",
+  },
+  pillMaskInner: {
+    position: "absolute",
+    flexDirection: "row",
+    width: windowWidth,
+    height: PILL_SIZE,
+  },
+  tabMask: {
+    height: PILL_SIZE,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
